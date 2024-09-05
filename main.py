@@ -1,4 +1,4 @@
-"""Made by: TheFrederick-git"""
+"""Made by TheFrederick-git, based on FOFOLA-1's hex counting bot (more in README)"""
 
 from os import environ, getenv
 
