@@ -1,5 +1,3 @@
-"""Made by TheFrederick-git, based on FOFOLA-1's hex counting bot (more in README)"""
-
 from os import environ, getenv
 
 from discord import Client, Intents, Message
@@ -13,12 +11,6 @@ client = Client(intents=Intents.all())  # Client instance
 
 
 @client.event
-async def on_ready() -> None:
-    """Message when ready"""
-    print(f"Logged in as {client.user}")
-
-
-@client.event
 async def on_message(message: Message) -> None:
     """Message processing"""
     if message.author == client.user:
@@ -29,24 +21,33 @@ async def on_message(message: Message) -> None:
         return None
 
     # Checking duplicity
-    last_messages = await message.channel.history(limit=2).flatten()
-    last_author_id = last_messages[-1].author.id
+    last_messages = await message.channel.history(limit=10).flatten()
+    last_author_id = [x for x in last_messages if not x.author.bot][1].author.id
     if message.author.id == last_author_id:
         await message.channel.send("Dej prostor taky ostatním!", delete_after=10)
         return None
 
     # Invalid next message
-    awaited_message = hex(int(environ["DISCORD_COUNTER"]))[2:]
+    awaited_message = hex(int(environ["DISCORD_COUNTER"], 16))[2:]
     if not message.content.lower().startswith(awaited_message):
-        await message.channel.send(f"Ajéje, chyba! Očekáválo se `{awaited_message}`")
+        await message.channel.send(
+            f"Ajéje, chyba! Očekáválo se `{awaited_message}`", delete_after=10
+        )
         return None
 
     # Valid input
     await message.add_reaction("\U0001f44d")
-    environ["DISCORD_COUNTER"] = str(int(environ["DISCORD_COUNTER"]) + 1)
+    next_val = hex(int(environ["DISCORD_COUNTER"], 16) + 1)
+    environ["DISCORD_COUNTER"] = next_val
+    with open("./save.txt", "w", encoding="UTF-8") as save_file:
+        save_file.write(next_val)
     return None
 
 
 if __name__ == "__main__":
-    environ["DISCORD_COUNTER"] = "0"  # Restart
+    try:
+        with open("./save.txt", "r", encoding="UTF-8") as save_file:
+            environ["DISCORD_COUNTER"] = save_file.read()
+    except FileNotFoundError:
+        environ["DISCORD_COUNTER"] = "0"
     client.run(getenv("TOKEN"))
