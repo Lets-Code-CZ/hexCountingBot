@@ -1,4 +1,4 @@
-# 🤖 Hexadecimální počítadlo jako Discord bot
+# 🤖 hex_count Discord bot na Let's Code
 Velice jednoduchý Discord bot napsaný v Pythonu pro naší počítací místnost na Discord serveru. Bot kontroluje, zda číslo navazuje na předchozí hexadecimální číslo v pořadí. Pokud někdo pošle špatnou odpověď, bot ho opraví a pokračuje se v počítání.
 
 - **Autor:** [TheFrederick (@thefrederick-git)](https://github.com/thefrederick-git)
